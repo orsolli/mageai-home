@@ -13,11 +13,6 @@ from zoneinfo import ZoneInfo
 @transformer
 def transform(data, *args, **kwargs):
     """
-    Template code for a transformer block.
-
-    Add more parameters to this function if this block has multiple parent blocks.
-    There should be one parameter for each output variable from each parent block.
-
     Args:
         data: The output from the upstream parent block
         args: The output from any additional upstream blocks (if applicable)
@@ -34,16 +29,17 @@ def transform(data, *args, **kwargs):
         for point in period.findall('{*}Point'):
             position = point.find('{*}position').text
             price_amount = point.find('{*}price.amount').text
+            # TODO: Figure out what happens on daylight savings switch
+            timestamp = period_start + timedelta(hours=int(position))
             result.append({
-                'time': pd.Timestamp(period_start + timedelta(hours=int(position))),
+                'timestamp': pd.Timestamp(timestamp),
                 'price_cent': int(float(price_amount)*100)
             })
 
     return pd.DataFrame(result).astype({
-      'time': pd.DatetimeTZDtype(tz=ZoneInfo('UTC')),
+      'timestamp': pd.DatetimeTZDtype(tz=ZoneInfo('UTC')),
       'price_cent': 'int'
     })
-
 
 
 @test
@@ -52,6 +48,7 @@ def test_output(output, *args) -> None:
     Template code for testing the output of the block.
     """
     assert output is not None, 'The output is undefined'
-    assert len(output) <= 24, 'The output is not 24 hours'
-    assert output['time'].min() + timedelta(hours=24) >= output['time'].max(), 'Time contains outliers'
+    assert len(output) <= 25, 'The output is more than 25 hours'
+    assert output['timestamp'].min() + timedelta(hours=25) >= output['timestamp'].max(), 'Time contains outliers'
+    assert output['timestamp'].min().hour in [22, 23], 'First position does not start at Norwegian midnight'
 
