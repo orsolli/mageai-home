@@ -31,8 +31,8 @@ def load_data_from_api(*args, **kwargs):
         execution_date.day,
         tzinfo=timezone.utc
       ) + timedelta(days=1)
-    fromDateTime = execution_day.isoformat().replace("+00:00", "Z")
-    toDateTime = fromDateTime
+    fromDateTime = (execution_day - timedelta(days=int(kwargs['include_previous_days']))).isoformat().replace("+00:00", "Z")
+    toDateTime = execution_day.isoformat().replace("+00:00", "Z")
     
     data = f'''
 <StatusRequest_MarketDocument xmlns="urn:iec62325.351:tc57wg16:451-5:statusrequestdocument:4:0">
@@ -80,7 +80,7 @@ def test_output(output, *args) -> None:
     """
     assert output is not None, 'The output is undefined'
     assert (output['response_status'] == 200).all(), 'API did not return status code 200'
-    assert 'period.timeInterval' in output['response_text'].iloc[0], 'Response does not contain period.timeInterval'
+    assert 'timeInterval>' in output['response_text'].iloc[0], 'Response does not contain period.timeInterval'
 
 """
 Documentations from https://www.reddit.com/r/sweden/comments/r50v12/finns_det_ett_apihemsida_f%C3%B6r_att_h%C3%A4mta_elpriser_i/

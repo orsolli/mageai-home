@@ -37,6 +37,7 @@ blocks:
   configuration: {}
   downstream_blocks:
   - fill_in_missing_values
+  - load_energy_price_file_time_series_line_chart_j1
   executor_config: null
   executor_type: local_python
   has_callback: false
@@ -79,7 +80,7 @@ blocks:
   language: python
   name: store_energy_price_file
   retry_config: null
-  status: executed
+  status: updated
   timeout: null
   type: data_exporter
   upstream_blocks:
@@ -109,6 +110,35 @@ tags:
 - Economy
 type: python
 uuid: entso_e
-variables: {}
+variables:
+  include_previous_days: 0
 variables_dir: /home/src/mage_data/mage-pi
-widgets: []
+widgets:
+- all_upstream_blocks_executed: true
+  color: null
+  configuration:
+    chart_type: time series line chart
+    design.y_values_smooth: ''
+    group_by:
+    - timestamp
+    metrics:
+    - aggregation: max
+      column: price_cent
+    time_interval: hour
+    x_axis_label_format: y-M-dThh
+    x_tooltip_label_format: ''
+    y_axis_label_format: ''
+    y_tooltip_label_format: ''
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: load_energy_price_file_time series line chart_j1
+  retry_config: null
+  status: executed
+  timeout: null
+  type: chart
+  upstream_blocks:
+  - load_energy_price_file
+  uuid: load_energy_price_file_time_series_line_chart_j1
