@@ -48,7 +48,7 @@ def test_output(output, *args) -> None:
     Template code for testing the output of the block.
     """
     assert output is not None, 'The output is undefined'
-    assert len(output) <= 25, 'The output is more than 25 hours'
-    assert output['timestamp'].min() + timedelta(hours=25) >= output['timestamp'].max(), 'Time contains outliers'
+    #assert len(output) <= 25, 'The output is more than 25 hours'
+    #assert output['timestamp'].min() + timedelta(hours=25) >= output['timestamp'].max(), 'Time contains outliers'
     assert output['timestamp'].min().hour in [22, 23], 'First position does not start at Norwegian midnight'
 

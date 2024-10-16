@@ -14,7 +14,7 @@ def export_data_to_file(df: DataFrame, **kwargs) -> None:
     df['month'] = df['timestamp'].dt.tz_convert('Europe/Oslo').dt.to_period('M')
 
     for date, group in df.groupby('month'):
-        filepath = f'energy-price-NO2-{date.year}-{date.month:0d}.csv'
+        filepath = f'energy-price-NO2-{date.year}-{date.month:02}.csv'
         FileIO().export(
             group,
             filepath,
