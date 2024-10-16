@@ -18,7 +18,8 @@ def load_data_from_file(*args, **kwargs):
 
     Docs: https://docs.mage.ai/design/data-loading#fileio
     """
-    date = pd.Timestamp(kwargs['execution_date'].replace(tzinfo=timezone.utc) - timedelta(days=int(kwargs['include_previous_days'])-1)).tz_convert('Europe/Oslo')
+    execution_date = kwargs.get('execution_date', datetime.utcnow())
+    date = pd.Timestamp(execution_date.replace(tzinfo=timezone.utc) - timedelta(days=int(kwargs.get('include_previous_days', 1))-1)).tz_convert('Europe/Oslo')
     filepath = f'energy-price-NO2-{date.year}-{date.month:02}.csv'
 
     try:
