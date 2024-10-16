@@ -1,4 +1,4 @@
-from pandas import DataFrame
+import pandas as pd
 import math
 
 if 'transformer' not in globals():
@@ -6,35 +6,24 @@ if 'transformer' not in globals():
 if 'test' not in globals():
     from mage_ai.data_preparation.decorators import test
 
-def select_number_columns(df: DataFrame) -> DataFrame:
-    return df[['Age', 'Fare', 'Parch', 'Pclass', 'SibSp', 'Survived']]
-
-
-def fill_missing_values_with_median(df: DataFrame) -> DataFrame:
-    for col in df.columns:
-        values = sorted(df[col].dropna().tolist())
-        median_value = values[math.floor(len(values) / 2)]
-        df[[col]] = df[[col]].fillna(median_value)
-    return df
 
 
 @transformer
-def transform_df(df: DataFrame, *args, **kwargs) -> DataFrame:
+def transform_df(tomorrow_df: pd.DataFrame, today_df: pd.DataFrame, *args, **kwargs) -> pd.DataFrame:
     """
-    Template code for a transformer block.
-
-    Add more parameters to this function if this block has multiple parent blocks.
-    There should be one parameter for each output variable from each parent block.
-
-    Args:
-        df (DataFrame): Data frame from parent block.
-
-    Returns:
-        DataFrame: Transformed data frame
+        Concatenates todays prices with tomorrows filled prices to fill tomorrows prices
     """
-    # Specify your transformation logic here
+    data = pd\
+        .concat([today_df, tomorrow_df])\
+        .drop_duplicates(subset='timestamp', keep='last')
 
-    return fill_missing_values_with_median(select_number_columns(df))
+    # Set the 'timestamp' column as the index
+    df = data.set_index('timestamp')
+
+    # Resample the DataFrame to hourly frequency, filling missing hours
+    df = df.resample('H').ffill()
+
+    return df.reset_index()
 
 
 @test

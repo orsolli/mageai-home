@@ -18,7 +18,8 @@ blocks:
 - all_upstream_blocks_executed: false
   color: null
   configuration: {}
-  downstream_blocks: []
+  downstream_blocks:
+  - fill_in_missing_values
   executor_config: null
   executor_type: local_python
   has_callback: false
@@ -31,6 +32,59 @@ blocks:
   upstream_blocks:
   - day_ahead_prices
   uuid: parse_day_ahead_price
+- all_upstream_blocks_executed: true
+  color: null
+  configuration: {}
+  downstream_blocks:
+  - fill_in_missing_values
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: load_energy_price_file
+  retry_config: null
+  status: executed
+  timeout: null
+  type: data_loader
+  upstream_blocks: []
+  uuid: load_energy_price_file
+- all_upstream_blocks_executed: false
+  color: null
+  configuration:
+    file_path: transformers/fill_in_missing_values.py
+    file_source:
+      path: transformers/fill_in_missing_values.py
+  downstream_blocks:
+  - store_energy_price_file
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: fill_in_missing_values
+  retry_config: null
+  status: executed
+  timeout: null
+  type: transformer
+  upstream_blocks:
+  - load_energy_price_file
+  - parse_day_ahead_price
+  uuid: fill_in_missing_values
+- all_upstream_blocks_executed: false
+  color: null
+  configuration: {}
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: store_energy_price_file
+  retry_config: null
+  status: executed
+  timeout: null
+  type: data_exporter
+  upstream_blocks:
+  - fill_in_missing_values
+  uuid: store_energy_price_file
 cache_block_output_in_memory: false
 callbacks: []
 concurrency_config: {}
@@ -55,5 +109,6 @@ tags:
 - Economy
 type: python
 uuid: entso_e
+variables: {}
 variables_dir: /home/src/mage_data/mage-pi
 widgets: []

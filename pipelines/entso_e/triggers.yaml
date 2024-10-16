@@ -1,0 +1,16 @@
+triggers:
+- description: null
+  envs: []
+  last_enabled_at: 2024-10-07 11:50:55.202675
+  name: silent paper
+  pipeline_uuid: entso_e
+  schedule_interval: '@daily'
+  schedule_type: time
+  settings:
+    skip_if_previous_running: true
+    timeout: '300'
+  sla: null
+  start_time: 2024-10-07 13:00:00
+  status: active
+  token: 88520b760f954ec3a565795171b60912
+  variables: {}
