@@ -5,6 +5,7 @@ if 'test' not in globals():
 import pandas as pd
 from datetime import timezone, datetime
 
+
 @transformer
 def transform(data, *args, **kwargs):
     """
@@ -22,11 +23,11 @@ def transform(data, *args, **kwargs):
     """
     execution_date = kwargs.get('execution_date', datetime.utcnow())
     from_time = pd.Timestamp(execution_date).replace(tzinfo=timezone.utc)
+    threshold = data['price_cent'].median() * 2
     data = data.loc[data['timestamp'] > from_time]
-    data['negative_price'] = data['price_cent'] < 0
-
-    if data['negative_price'].any():
+    data['high_price'] = data['price_cent'] > threshold
+    if data['high_price'].any():
         return f"""
-            Energy price will go negative at this time:
-            {data.loc[data['negative_price']]['timestamp'].iloc[0]}
+            Energy price will be high at this time:
+            {data.loc[data['high_price']]['timestamp'].iloc[0]}
         """

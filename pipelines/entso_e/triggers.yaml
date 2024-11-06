@@ -4,7 +4,7 @@ triggers:
   last_enabled_at: 2024-10-07 11:50:55.202675
   name: silent paper
   pipeline_uuid: entso_e
-  schedule_interval: 0 11 * * *
+  schedule_interval: 0 12 * * *
   schedule_type: time
   settings:
     landing_time_enabled: false

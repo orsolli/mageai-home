@@ -25,6 +25,7 @@ blocks:
       path: data_loaders/load_energy_price_file.py
   downstream_blocks:
   - detect_price_dump
+  - message_high_price
   executor_config: null
   executor_type: local_python
   has_callback: false
@@ -57,6 +58,23 @@ blocks:
 - all_upstream_blocks_executed: true
   color: null
   configuration: {}
+  downstream_blocks:
+  - email_sender
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: Message high price
+  retry_config: null
+  status: executed
+  timeout: null
+  type: transformer
+  upstream_blocks:
+  - load_energy_price_file
+  uuid: message_high_price
+- all_upstream_blocks_executed: true
+  color: null
+  configuration: {}
   downstream_blocks: []
   executor_config: null
   executor_type: local_python
@@ -64,10 +82,11 @@ blocks:
   language: python
   name: email sender
   retry_config: null
-  status: executed
+  status: updated
   timeout: null
   type: data_exporter
   upstream_blocks:
+  - message_high_price
   - detect_price_dump
   uuid: email_sender
 cache_block_output_in_memory: false

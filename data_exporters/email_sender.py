@@ -17,19 +17,7 @@ def export_data(data, *args, **kwargs):
         Optionally return any object and it'll be logged and
         displayed when inspecting the block run.
     """
-
-    messages = []
-    token = get_secret_value('mailtrap_token')
-    if data['negative_price'].any():
-        messages.append(f"""
-            Energy price will go negative at this time:
-            {data.loc[data['negative_price']]['timestamp'].iloc[0]}
-        """)
-    if data['high_price'].any():
-        messages.append(f"""
-            Energy price will be high at this time:
-            {data.loc[data['high_price']]['timestamp'].iloc[0]}
-        """)
+    messages = [message for message in data if message is not None]
     if len(messages):
         # create client and send
         client = mailtrap.MailtrapClient(token=token)
@@ -39,7 +27,7 @@ def export_data(data, *args, **kwargs):
             subject='Alert',
             text=f"""
                 {','.join(messages)}
-                __unsubscribe_url__
+                ---------------------
             """
         ))
 
