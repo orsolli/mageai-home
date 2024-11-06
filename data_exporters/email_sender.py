@@ -5,7 +5,7 @@ import mailtrap
 
 
 @data_exporter
-def export_data(data, *args, **kwargs):
+def export_data(*data, **kwargs):
     """
     Exports data to some source.
 
@@ -17,7 +17,8 @@ def export_data(data, *args, **kwargs):
         Optionally return any object and it'll be logged and
         displayed when inspecting the block run.
     """
-    messages = [message for message in data if message is not None]
+    messages = [message for data_messages in data for message in data_messages]
+    token = get_secret_value('mailtrap_token')
     if len(messages):
         # create client and send
         client = mailtrap.MailtrapClient(token=token)
