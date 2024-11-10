@@ -27,7 +27,7 @@ def transform(data, *args, **kwargs):
     data = data.loc[data['timestamp'] > from_time]
     data['high_price'] = data['price_cent'] > threshold
     if data['high_price'].any():
-        return [f"""
+        return f"""
             Energy price will be high at this time:
             {data.loc[data['high_price']]['timestamp'].iloc[0]}
-        """]
+        """

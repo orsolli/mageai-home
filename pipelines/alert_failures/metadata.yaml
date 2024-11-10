@@ -27,7 +27,7 @@ blocks:
   language: python
   name: email_sender
   retry_config: null
-  status: executed
+  status: updated
   timeout: null
   type: data_exporter
   upstream_blocks:

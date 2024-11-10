@@ -26,7 +26,7 @@ def transform(data, *args, **kwargs):
     data['negative_price'] = data['price_cent'] < 0
 
     if data['negative_price'].any():
-        return [f"""
+        return f"""
             Energy price will go negative at this time:
             {data.loc[data['negative_price']]['timestamp'].iloc[0]}
-        """]
+        """

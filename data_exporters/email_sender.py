@@ -17,7 +17,7 @@ def export_data(*data, **kwargs):
         Optionally return any object and it'll be logged and
         displayed when inspecting the block run.
     """
-    messages = [message for data_messages in data for message in data_messages]
+    messages = [message for message in data if len(message)]
     token = get_secret_value('mailtrap_token')
     if len(messages):
         # create client and send
