@@ -55,5 +55,8 @@ spark_config: {}
 tags: []
 type: python
 uuid: alert_failures
+variables:
+  email_from: magepi@demomailtrap.com
+  email_to: orjansolli@outlook.com
 variables_dir: /home/src/mage_data/mage-pi
 widgets: []

@@ -13,18 +13,22 @@ def load_data(*args, **kwargs):
     Returns:
         Anything (e.g. data frame, dictionary, array, int, str, etc.)
     """
-    if not check_status(
-        'entso_e',
-        kwargs['execution_date'],
-        block_uuid='store_energy_price_file',
-        hours=24,
-    ):
+    try:
+        check_status(
+            'entso_e',
+            kwargs['execution_date'],
+            block_uuid='store_energy_price_file',
+            hours=24,
+        )
+    except:
         return 'Failed to run Entso-E pipeline'
 
-    if not check_status(
-        'alert_energy_price',
-        kwargs['execution_date'],
-        block_uuid='email_sender',
-        hours=24,
-    ):
+    try:
+        check_status(
+            'alert_energy_price',
+            kwargs['execution_date'],
+            block_uuid='email_sender',
+            hours=24,
+        )
+    except:
         return 'Failed to run Alert Energy Price pipeline'
