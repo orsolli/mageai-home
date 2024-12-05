@@ -6,7 +6,7 @@ blocks:
     file_source:
       path: data_loaders/load_energy_price_file.py
   downstream_blocks:
-  - cost_of_mining
+  - add_vat
   executor_config: null
   executor_type: local_python
   has_callback: false
@@ -22,7 +22,24 @@ blocks:
   color: null
   configuration: {}
   downstream_blocks:
-  - direct_miner
+  - cost_of_mining
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: Add VAT
+  retry_config: null
+  status: executed
+  timeout: null
+  type: transformer
+  upstream_blocks:
+  - load_energy_price_file
+  uuid: add_vat
+- all_upstream_blocks_executed: true
+  color: null
+  configuration: {}
+  downstream_blocks:
+  - descide_profitability
   executor_config: null
   executor_type: local_python
   has_callback: false
@@ -33,13 +50,13 @@ blocks:
   timeout: null
   type: transformer
   upstream_blocks:
-  - load_energy_price_file
+  - add_vat
   uuid: cost_of_mining
 - all_upstream_blocks_executed: true
   color: null
   configuration: {}
   downstream_blocks:
-  - direct_miner
+  - descide_profitability
   executor_config: null
   executor_type: local_python
   has_callback: false
@@ -55,6 +72,24 @@ blocks:
   color: null
   configuration: {}
   downstream_blocks:
+  - direct_miner
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: descide profitability
+  retry_config: null
+  status: executed
+  timeout: null
+  type: transformer
+  upstream_blocks:
+  - load_xmr_price
+  - cost_of_mining
+  uuid: descide_profitability
+- all_upstream_blocks_executed: true
+  color: null
+  configuration: {}
+  downstream_blocks:
   - trigger_mining_director
   executor_config: null
   executor_type: local_python
@@ -62,14 +97,13 @@ blocks:
   language: python
   name: Direct miner
   retry_config: null
-  status: updated
+  status: executed
   timeout: null
   type: data_exporter
   upstream_blocks:
-  - cost_of_mining
-  - load_xmr_price
+  - descide_profitability
   uuid: direct_miner
-- all_upstream_blocks_executed: false
+- all_upstream_blocks_executed: true
   color: null
   configuration:
     file_source:

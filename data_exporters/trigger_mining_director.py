@@ -33,13 +33,14 @@ def trigger(data, *args, **kwargs):
         schedule_name_new = schedule_name_off
 
     schedule_type = ScheduleType.TIME
+    old_pipeline_schedule = PipelineSchedule.repo_query.filter(
+        PipelineSchedule.name == schedule_name,
+        PipelineSchedule.pipeline_uuid == pipeline_uuid,
+        PipelineSchedule.schedule_type == schedule_type,
+    ).first()
 
     if schedule_name != schedule_name_new:
-        old_pipeline_schedule = PipelineSchedule.repo_query.filter(
-            PipelineSchedule.name == schedule_name,
-            PipelineSchedule.pipeline_uuid == pipeline_uuid,
-            PipelineSchedule.schedule_type == schedule_type,
-        ).first().update(
+        old_pipeline_schedule.update(
             status=ScheduleStatus.INACTIVE,
         )
 
@@ -66,5 +67,6 @@ def trigger(data, *args, **kwargs):
 
     pipeline_schedule.update(
         status=ScheduleStatus.ACTIVE,
+        variables=old_pipeline_schedule.variables if old_pipeline_schedule else pipeline_schedule.variables,
         start_time=start_time
     )

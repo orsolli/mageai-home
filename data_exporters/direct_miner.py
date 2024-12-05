@@ -10,7 +10,7 @@ from datetime import timezone, datetime
 
 
 @data_exporter
-def export_data(energy_prices, crypto_price, *args, **kwargs):
+def export_data(energy_prices, *args, **kwargs):
     """
     Exports data to some source.
 
@@ -22,25 +22,23 @@ def export_data(energy_prices, crypto_price, *args, **kwargs):
         Optionally return any object and it'll be logged and
         displayed when inspecting the block run.
     """
-    xmr_price = crypto_price['quote.EUR.price'].iloc[0]
     execution_date = kwargs.get('execution_date', datetime.utcnow())
     from_time = pd.Timestamp(execution_date).replace(tzinfo=timezone.utc)
-    future = energy_prices['timestamp'] > from_time
-    eur_per_xmr = energy_prices['EUR/XMR']
-    eur_per_xmr_now = eur_per_xmr.loc[future].iloc[0]
+    future = energy_prices['timestamp'] > from_time - pd.Timedelta(hours=1)
 
-    cold = from_time.month in [1,2,3,4,9,10,11,12]
     compare_time_window = from_time - pd.Timedelta(days=1)
-    threshold = eur_per_xmr.loc[energy_prices['timestamp'] > compare_time_window].median() * 1.5
-    energy_prices['on'] = eur_per_xmr < (xmr_price if not cold else max(xmr_price, threshold))
-    on = energy_prices['on'].loc[future].iloc[0]
+    threshold = energy_prices['EUR/XMR'].loc[energy_prices['timestamp'] > compare_time_window].median() * 1.5
+    energy_prices['cheap'] = energy_prices['EUR/XMR'] < threshold
+    is_profitable = energy_prices['profitable'].loc[future].iloc[0]
+    is_cheap = energy_prices['cheap'].loc[future].iloc[0]
+    is_cold = False
+    on = is_profitable or is_cold and is_cheap
 
-    next_change = energy_prices.loc[future & (energy_prices['on'] ^ on)]
+    next_change = energy_prices.loc[future & (energy_prices['profitable'] ^ on)]
     next_change_time = from_time.ceil('24h')
     if next_change.size:
         next_change_time = next_change['timestamp'].loc[future].iloc[0]
 
-    print(f'{eur_per_xmr_now=} is {"less" if on else "more"} than {int(xmr_price)=} or {int(threshold)=} at least until {next_change_time}')
     api_key = get_secret_value('xmrig_api_key')
     host = kwargs.get('xmrig_api', 'http://localhost')
 
